@@ -1,9 +1,9 @@
 <!doctype html> 
 <html lang="en"> 
 <head> 
-	<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <title>Light Bulb Game</title>
-	<script type="text/javascript" src="phaser.min.js"></script>
+    <script type="text/javascript" src="phaser.min.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -23,6 +23,9 @@ function preload() {
     game.load.image('teleporter', 'assets/teleporter.png')
     game.load.image('teleporter2', 'assets/teleporter-yellow.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.image('platform', 'assets/platform.png');
+
+    //Load pieces
     game.load.image('piece1', 'assets/piece1.png');
     game.load.image('piece2', 'assets/piece2.png');
     game.load.image('piece3', 'assets/piece3.png');
@@ -37,7 +40,6 @@ var cursors;
 var pieces;
 var piece_count = 0;
 
-
 function create() {
 
     //  A simple background for our game
@@ -45,6 +47,7 @@ function create() {
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
+    static_platforms = game.add.group();
 
     // The pieces are the pieces of the light bulb.
     pieces = game.add.group();
@@ -54,6 +57,24 @@ function create() {
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
+
+    // Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
+    // Platforms with a trailing m are moving platforms.
+    var platform_1_p = platforms.create(80,520, 'platform');
+    var platform_2 = platforms.create(180, 460, 'platform');
+    var platform_3 = platforms.create(380, 460, 'platform');
+    var platform_4 = platforms.create(500, 500, 'platform');
+    var platform_5_p = platforms.create(640, 480, 'platform');
+    var platform_6 = platforms.create(740, 440, 'platform');
+    var platform_7 = platforms.create(760, 360, 'platform');
+    var platform_8_m = platforms.create(660, 300, 'platform');
+    var platform_9  = platforms.create(380, 300, 'platform');
+    var platform_10_p = platforms.create(250, 240, 'platform');
+    var platform_11_m = platforms.create(400, 190, 'platform');
+    var platform_12_m = platforms.create(600, 120, 'platform');
+    var platform_13_p = platforms.create(740, 120, 'platform');
+    var platform_14 = platforms.create(200, 120, 'platform');
+    var platform_15 = platforms.create(0, 90, 'platform');
 
     // Add the pieces and scale them down to size.
     var piece1 = pieces.create(200, 500, 'piece1');
@@ -101,6 +122,24 @@ function create() {
     // The teleporter
     teleporter = game.add.sprite(700, game.world.height - 124, 'teleporter');
     teleporter.scale.setTo(.5, .5);
+    
+    // This stops ground/platforms from falling away when you jump on them
+    ground.body.immovable = true;
+    platform_1_p.body.immovable = true;
+    platform_2.body.immovable = true;
+    platform_3.body.immovable = true;
+    platform_4.body.immovable = true;
+    platform_5_p.body.immovable = true;
+    platform_6.body.immovable = true;
+    platform_7.body.immovable = true;
+    platform_8_m.body.immovable = true;
+    platform_9.body.immovable = true;
+    platform_10_p.body.immovable = true;
+    platform_11_m.body.immovable = true;
+    platform_12_m.body.immovable = true;
+    platform_13_p.body.immovable = true;
+    platform_14.body.immovable = true;
+    platform_15.body.immovable = true;
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
