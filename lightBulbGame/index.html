@@ -24,6 +24,7 @@ function preload() {
     game.load.image('teleporter2', 'assets/teleporter-yellow-right.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.image('platform', 'assets/platform.png');
+    game.load.image('bandaid', 'assets/bandaid');
 
     //Load pieces
     game.load.image('piece1', 'assets/piece1.png');
@@ -32,6 +33,7 @@ function preload() {
     game.load.image('piece4', 'assets/piece4.png');
     game.load.image('piece5', 'assets/piece5.png');
     game.load.image('dead_bulb', 'assets/lightbulb_bw');
+    game.load.image('lightbulb', 'assets/lightbulb');
 
 }
 
@@ -158,11 +160,10 @@ function update() {
     game.physics.overlap(player, piece4, collectPiece, null, this);
     game.physics.overlap(player, piece5, collectPiece, null, this);
 
-    if (piece_count == 2)
+    if (piece_count == 5)
     {
-        var dead_bulb = pieces.create(138, 605, 'dead_bulb');
-        dead_bulb.scale.setTo(.1, .1);
-
+        var bandaid = pieces.create(150, 610, 'bandaid');
+        bandaid.scale.setTo(.022, .022);
     }
 
     // Walk onto teleporter.
@@ -174,14 +175,14 @@ function update() {
     if (cursors.left.isDown)
     {
         //  Move to the left
-        player.body.velocity.x = -150;
+        player.body.velocity.x = -100;
 
         player.animations.play('left');
     }
     else if (cursors.right.isDown)
     {
         //  Move to the right
-        player.body.velocity.x = 150;
+        player.body.velocity.x = 100;
 
         player.animations.play('right');
     }
@@ -194,9 +195,9 @@ function update() {
     }
     
     //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown)// && player.body.touching.down)
+    if (cursors.up.isDown && player.body.touching.down)
     {
-        player.body.velocity.y = -350;
+        player.body.velocity.y = -250;
     }
 
 }
@@ -265,6 +266,13 @@ function switchTeleporter (player, teleporter) {
         // Add new teleporter
         teleporter2 = game.add.sprite(3, 26, 'teleporter2');
         teleporter2.scale.setTo(.5, .5);
+
+        var lightbulb = pieces.create(136, 605, 'lightbulb');
+        lightbulb.scale.setTo(.12, .12);
+
+        lightbulb.body.sprite.bringToTop();
+
+        piece_count = 0;
     }
 
     player.body.sprite.bringToTop();
