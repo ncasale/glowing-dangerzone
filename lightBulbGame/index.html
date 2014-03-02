@@ -20,6 +20,8 @@ function preload() {
 
     game.load.image('ground', 'assets/ground.png');
     game.load.image('background', 'assets/background2.png');
+    game.load.image('teleporter', 'assets/teleporter.png')
+    game.load.image('teleporter2', 'assets/teleporter-yellow.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.image('piece1', 'assets/piece1.png');
     game.load.image('piece2', 'assets/piece2.png');
@@ -78,6 +80,9 @@ function create() {
     piece5.body.gravity.y = 6;
     piece5.body.bounce.y = 0.2;
 
+    // The teleporter
+    teleporter = game.add.sprite(700, game.world.height - 138, 'teleporter');
+
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
 
@@ -103,6 +108,9 @@ function update() {
 
     // Pick up pieces
     game.physics.overlap(player, pieces, collectPiece, null, this);
+
+    // Walk onto teleporter.
+    game.physics.overlap(player, teleporter, switchTeleporter, null, this);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -139,10 +147,18 @@ function update() {
 
 function collectPiece (player, pieces) {
     
-    // Removes the star from the screen
+    // Removes the piece from the screen
     pieces.kill();
 }
 
+function switchTeleporter (player, teleporter) {
+    
+    // Removes the teleporter from the screen
+    teleporter.kill();
+
+    // Add new teleporter
+    teleporter2 = game.add.sprite(700, game.world.height - 138, 'teleporter2');
+}
 
 </script>
 
