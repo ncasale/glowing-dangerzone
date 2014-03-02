@@ -19,15 +19,20 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 function preload() {
 
     game.load.image('ground', 'assets/ground.png');
-    game.load.image('background', 'assets/background.jpg');
+    game.load.image('background', 'assets/background2.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-
+    game.load.image('piece1', 'assets/piece1.png');
+    game.load.image('piece2', 'assets/piece2.png');
+    game.load.image('piece3', 'assets/piece3.png');
+    game.load.image('piece4', 'assets/piece4.png');
+    game.load.image('piece5', 'assets/piece5.png');
 
 }
 
 var player;
 var platforms;
 var cursors;
+var pieces;
 
 
 function create() {
@@ -38,8 +43,26 @@ function create() {
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
 
+    // The pieces are the pieces of the light bulb.
+    pieces = game.add.group();
+
     // Here we create the ground.
     var ground = platforms.create(0, game.world.height - 10, 'ground');
+
+    var piece1 = pieces.create(200, 500, 'piece1');
+    piece1.scale.setTo(.2, .2);
+
+    var piece2 = pieces.create(250, 500, 'piece2');
+    piece2.scale.setTo(.2, .2);
+
+    var piece3 = pieces.create(300, 500, 'piece3');
+    piece3.scale.setTo(.2, .2);
+
+    var piece4 = pieces.create(350, 500, 'piece4');
+    piece4.scale.setTo(.2, .2);
+
+    var piece5 = pieces.create(400, 500, 'piece5');
+    piece5.scale.setTo(.2, .2);
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
