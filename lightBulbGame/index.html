@@ -35,6 +35,7 @@ var player;
 var platforms;
 var cursors;
 var pieces;
+var piece_count = 0;
 
 
 function create() {
@@ -149,15 +150,22 @@ function collectPiece (player, pieces) {
     
     // Removes the piece from the screen
     pieces.kill();
+
+    piece_count += 1; 
 }
 
 function switchTeleporter (player, teleporter) {
     
-    // Removes the teleporter from the screen
-    teleporter.kill();
+    if (piece_count == 5)
+    {
+        // Removes the teleporter from the screen
+        teleporter.kill();
 
-    // Add new teleporter
-    teleporter2 = game.add.sprite(700, game.world.height - 138, 'teleporter2');
+        // Add new teleporter
+        teleporter2 = game.add.sprite(700, game.world.height - 138, 'teleporter2');
+    }
+
+    player.body.sprite.bringToTop();
 }
 
 </script>
