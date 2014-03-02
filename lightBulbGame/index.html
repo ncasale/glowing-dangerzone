@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update});
 
 function preload() {
 
@@ -36,40 +36,41 @@ var player;
 var platforms;
 var cursors;
 var pieces;
+var platform_8_m;
+var acc = -10;
+var x_vel = -50;
 
 function create() {
 
     //  A simple background for our game
-    game.add.sprite(0, 0, 'background');
+    game.add.sprite(0, 0, 'background');    
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
-    static_platforms = game.add.group();
 
     // The pieces are the pieces of the light bulb.
     pieces = game.add.group();
 
     // Here we create the ground.
     var ground = platforms.create(0, game.world.height - 10, 'ground');
-
     /*Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
       Platforms with a trailing m are moving platforms. */
 
-    var platform_1_p = platforms.create(80,520, 'platform');
-    var platform_2 = platforms.create(180, 460, 'platform');
-    var platform_3 = platforms.create(380, 460, 'platform');
-    var platform_4 = platforms.create(500, 500, 'platform');
-    var platform_5_p = platforms.create(640, 480, 'platform');
-    var platform_6 = platforms.create(740, 440, 'platform');
-    var platform_7 = platforms.create(760, 360, 'platform');
-    var platform_8_m = platforms.create(660, 300, 'platform');
-    var platform_9  = platforms.create(380, 300, 'platform');
-    var platform_10_p = platforms.create(250, 240, 'platform');
-    var platform_11_m = platforms.create(400, 190, 'platform');
-    var platform_12_m = platforms.create(600, 120, 'platform');
-    var platform_13_p = platforms.create(740, 120, 'platform');
-    var platform_14 = platforms.create(200, 120, 'platform');
-    var platform_15 = platforms.create(0, 90, 'platform');
+   var platform_1_p = platforms.create(80,520, 'platform');
+   var platform_2 = platforms.create(180, 460, 'platform');
+   var platform_3 = platforms.create(380, 460, 'platform');
+   var platform_4 = platforms.create(500, 500, 'platform');
+   var platform_5_p = platforms.create(640, 480, 'platform');
+   var platform_6 = platforms.create(740, 440, 'platform');
+   var platform_7 = platforms.create(760, 360, 'platform');
+   platform_8_m = platforms.create(560, 330, 'platform');
+   var platform_9  = platforms.create(380, 300, 'platform');
+   var platform_10_p = platforms.create(250, 240, 'platform');
+   var platform_11_m = platforms.create(400, 190, 'platform');
+   var platform_12_m = platforms.create(590, 140, 'platform');
+   var platform_13_p = platforms.create(740, 120, 'platform');
+   var platform_14 = platforms.create(200, 120, 'platform');
+   var platform_15 = platforms.create(0, 90, 'platform');
 
     var piece1 = pieces.create(200, 500, 'piece1');
     piece1.scale.setTo(.2, .2);
@@ -120,8 +121,14 @@ function create() {
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
+
+    //Test
+    velText = game.add.text(16, 16, 'Velocity: ', {fontsize: '32px', fill: '#FFFFFF'});
+
+    game.time.events.loop(Phaser.Timer.SECOND, changeVelocity, this);
     
 }
+
 
 function update() {
 
@@ -159,6 +166,8 @@ function update() {
     {
         player.body.velocity.y = -350;
     }
+
+
 
 }
 
