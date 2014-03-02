@@ -20,8 +20,8 @@ function preload() {
 
     game.load.image('ground', 'assets/ground.png');
     game.load.image('background', 'assets/background2.png');
-    game.load.image('teleporter', 'assets/teleporter.png')
-    game.load.image('teleporter2', 'assets/teleporter-yellow.png');
+    game.load.image('teleporter', 'assets/teleporter-right.png')
+    game.load.image('teleporter2', 'assets/teleporter-yellow-right.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.image('platform', 'assets/platform.png');
 
@@ -31,6 +31,7 @@ function preload() {
     game.load.image('piece3', 'assets/piece3.png');
     game.load.image('piece4', 'assets/piece4.png');
     game.load.image('piece5', 'assets/piece5.png');
+    game.load.image('dead_bulb', 'assets/lightbulb_bw');
 
 }
 
@@ -38,6 +39,11 @@ var player;
 var platforms;
 var cursors;
 var pieces;
+var piece1;
+var piece2;
+var piece3;
+var piece4;
+var piece5;
 var piece_count = 0;
 
 function create() {
@@ -60,7 +66,7 @@ function create() {
 
     // Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
     // Platforms with a trailing m are moving platforms.
-    var platform_1_p = platforms.create(80,520, 'platform');
+    var platform_1_p = platforms.create(80, 520, 'platform');
     var platform_2 = platforms.create(180, 460, 'platform');
     var platform_3 = platforms.create(380, 460, 'platform');
     var platform_4 = platforms.create(500, 500, 'platform');
@@ -77,50 +83,31 @@ function create() {
     var platform_15 = platforms.create(0, 90, 'platform');
 
     // Add the pieces and scale them down to size.
-    var piece1 = pieces.create(200, 500, 'piece1');
+    piece1 = pieces.create(106.8, 503.1, 'piece1');
     piece1.scale.setTo(.1, .1);
     piece1.body.gravity.y = 6;
     piece1.body.bounce.y = 0.2;
 
-    var piece2 = pieces.create(250, 500, 'piece2');
+    piece2 = pieces.create(665.95, 463.93, 'piece2');
     piece2.scale.setTo(.1, .1);
     piece2.body.gravity.y = 6;
     piece2.body.bounce.y = 0.2;
 
-    var piece3 = pieces.create(300, 500, 'piece3');
+    piece3 = pieces.create(274.9, 220.1, 'piece3');
     piece3.scale.setTo(.1, .1);
     piece3.body.gravity.y = 6;
     piece3.body.bounce.y = 0.2;
 
-    var piece4 = pieces.create(350, 500, 'piece4');
+    piece4 = pieces.create(767.1, 88.9, 'piece4');
     piece4.scale.setTo(.1, .1);
     piece4.body.gravity.y = 6;
     piece4.body.bounce.y = 0.2;
 
-    var piece5 = pieces.create(400, 500, 'piece5');
+    piece5 = pieces.create(80, 45, 'piece5');
     piece5.scale.setTo(.1, .1);
-    piece5.body.gravity.y = 6;
-    piece5.body.bounce.y = 0.2;
-
-    // Add the light bulb status diplay
-    var disp1 = pieces.create(150, 605, 'piece1');
-    disp1.scale.setTo(.1, .1);
-
-    var disp2 = pieces.create(138, 605, 'piece2');
-    disp2.scale.setTo(.1, .1);
-
-    var disp3 = pieces.create(138, 610, 'piece3');
-    disp3.scale.setTo(.1, .1);
-
-    var disp4 = pieces.create(152, 618, 'piece4');
-    disp4.scale.setTo(.1, .1);
-
-    var disp5 = pieces.create(137, 626, 'piece5');
-    disp5.scale.setTo(.1, .1);
-
 
     // The teleporter
-    teleporter = game.add.sprite(700, game.world.height - 124, 'teleporter');
+    teleporter = game.add.sprite(3, 26, 'teleporter');
     teleporter.scale.setTo(.5, .5);
     
     // This stops ground/platforms from falling away when you jump on them
@@ -165,7 +152,18 @@ function update() {
     game.physics.collide(pieces, platforms);
 
     // Pick up pieces
-    game.physics.overlap(player, pieces, collectPiece, null, this);
+    game.physics.overlap(player, piece1, collectPiece, null, this);
+    game.physics.overlap(player, piece2, collectPiece, null, this);
+    game.physics.overlap(player, piece3, collectPiece, null, this);
+    game.physics.overlap(player, piece4, collectPiece, null, this);
+    game.physics.overlap(player, piece5, collectPiece, null, this);
+
+    if (piece_count == 2)
+    {
+        var dead_bulb = pieces.create(138, 605, 'dead_bulb');
+        dead_bulb.scale.setTo(.1, .1);
+
+    }
 
     // Walk onto teleporter.
     game.physics.overlap(player, teleporter, switchTeleporter, null, this);
@@ -196,19 +194,65 @@ function update() {
     }
     
     //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown && player.body.touching.down)
+    if (cursors.up.isDown)// && player.body.touching.down)
     {
         player.body.velocity.y = -350;
     }
 
 }
 
-function collectPiece (player, pieces) {
+function collectPiece (player, piece) {
     
-    // Removes the piece from the screen
-    pieces.kill();
+    if (piece == piece1)
+    {
+        var disp1 = pieces.create(150, 605, 'piece1');
+        disp1.scale.setTo(.1, .1);
 
+        // Removes the piece from the screen
+        piece1.kill();
+    }
+    if (piece == piece2)
+    {
+        var disp2 = pieces.create(138, 605, 'piece2');
+        disp2.scale.setTo(.1, .1);
+
+        // Removes the piece from the screen
+        piece2.kill();
+    }
+    if (piece == piece3)
+    {
+        var disp3 = pieces.create(138, 610, 'piece3');
+        disp3.scale.setTo(.1, .1);
+
+        // Removes the piece from the screen
+        piece3.kill();
+    }
+    if (piece == piece4)
+    {
+        var disp4 = pieces.create(152, 618, 'piece4');
+        disp4.scale.setTo(.1, .1);
+
+        // Removes the piece from the screen
+        piece4.kill();
+    }
+    if (piece == piece5)
+    {
+        var disp5 = pieces.create(137, 626, 'piece5');
+        disp5.scale.setTo(.1, .1);
+
+        // Removes the piece from the screen
+        piece5.kill();
+    }
     piece_count += 1; 
+
+}
+
+function createDisp(x) {
+    if (x == 1)
+    {
+        var disp1 = pieces.create(150, 605, 'piece1');
+        disp1.scale.setTo(.1, .1);
+    }
 }
 
 function switchTeleporter (player, teleporter) {
@@ -219,7 +263,7 @@ function switchTeleporter (player, teleporter) {
         teleporter.kill();
 
         // Add new teleporter
-        teleporter2 = game.add.sprite(700, game.world.height - 124, 'teleporter2');
+        teleporter2 = game.add.sprite(3, 26, 'teleporter2');
         teleporter2.scale.setTo(.5, .5);
     }
 
