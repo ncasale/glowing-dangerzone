@@ -49,24 +49,34 @@ function create() {
     // Here we create the ground.
     var ground = platforms.create(0, game.world.height - 10, 'ground');
 
-    var piece1 = pieces.create(200, 500, 'piece1');
-    piece1.scale.setTo(.2, .2);
-
-    var piece2 = pieces.create(250, 500, 'piece2');
-    piece2.scale.setTo(.2, .2);
-
-    var piece3 = pieces.create(300, 500, 'piece3');
-    piece3.scale.setTo(.2, .2);
-
-    var piece4 = pieces.create(350, 500, 'piece4');
-    piece4.scale.setTo(.2, .2);
-
-    var piece5 = pieces.create(400, 500, 'piece5');
-    piece5.scale.setTo(.2, .2);
-
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
 
+    // Add the pieces and scale them down to size.
+    var piece1 = pieces.create(200, 500, 'piece1');
+    piece1.scale.setTo(.2, .2);
+    piece1.body.gravity.y = 6;
+    piece1.body.bounce.y = 0.2;
+
+    var piece2 = pieces.create(250, 500, 'piece2');
+    piece2.scale.setTo(.2, .2);
+    piece2.body.gravity.y = 6;
+    piece2.body.bounce.y = 0.2;
+
+    var piece3 = pieces.create(300, 500, 'piece3');
+    piece3.scale.setTo(.2, .2);
+    piece3.body.gravity.y = 6;
+    piece3.body.bounce.y = 0.2;
+
+    var piece4 = pieces.create(350, 500, 'piece4');
+    piece4.scale.setTo(.2, .2);
+    piece4.body.gravity.y = 6;
+    piece4.body.bounce.y = 0.2;
+
+    var piece5 = pieces.create(400, 500, 'piece5');
+    piece5.scale.setTo(.2, .2);
+    piece5.body.gravity.y = 6;
+    piece5.body.bounce.y = 0.2;
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
@@ -80,7 +90,6 @@ function create() {
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
     
@@ -88,12 +97,15 @@ function create() {
 
 function update() {
 
-
+    // Collisions
     game.physics.collide(player, platforms);
+    game.physics.collide(pieces, platforms);
+
+    // Pick up pieces
+    game.physics.overlap(player, pieces, collectPiece, null, this);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
-
 
     if (cursors.left.isDown)
     {
@@ -123,6 +135,12 @@ function update() {
         player.body.velocity.y = -350;
     }
 
+}
+
+function collectPiece (player, pieces) {
+    
+    // Removes the star from the screen
+    pieces.kill();
 }
 
 
