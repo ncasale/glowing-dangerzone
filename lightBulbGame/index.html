@@ -208,24 +208,36 @@ function update() {
     //Get current x position of platform
     var curr_x_pos = platform_8_m.body.x;
 
-    //Logic for horizontal moving platform
-    if(curr_x_pos <= 660 && curr_x_pos > 600)
-    {
-        x_acc = -100;
-    }
-
-    if(curr_x_pos >= 540 && curr_x_pos < 600)
-    {
-        x_acc = 100;
-    }
-    if(curr_x_pos == 600)
-    {
-        x_acc = 0;
-    }
-
-    platform_8_m.body.acceleration.x = x_acc;
+    moveHoriz(platform_8_m, curr_x_pos, 540, 660, 600);
+ 
 }
 
+function moveHoriz(platform, x, min, max, center)
+{
+     //Logic for horizontal moving platform
+    if(x <= max && x > center)
+    {
+        x_acc = -400;
+    }
+
+    if (x > max)
+    {
+        platform.body.x = max;
+    }
+
+    if(x >= min && x < center)
+    {
+        x_acc = 400;
+    }
+
+    if(x < min)
+    {
+        platform.body.x = min;
+    }
+
+
+    platform.body.acceleration.x = x_acc;
+}  
 function collectPiece (player, piece) {
     
     if (piece == piece1)
