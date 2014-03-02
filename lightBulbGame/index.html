@@ -37,6 +37,8 @@ function preload() {
     game.load.image('dead_bulb', 'assets/lightbulb_bw');
     game.load.image('lightbulb', 'assets/lightbulb');
 
+    game.load.image('beam', 'assets/beam');
+
 }
 
 var player;
@@ -63,7 +65,6 @@ function create() {
     // The pieces are the pieces of the light bulb.
     pieces = game.add.group();
 
-
     /*Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
       Platforms with a trailing m are moving platforms. */
 
@@ -84,10 +85,6 @@ function create() {
    var platform_15 = platforms.create(0, 90, 'platform');
    var platform_16 = platforms.create(181, 125, 'platform');
    var ground = platforms.create(0, game.world.height - 60, 'ground');
-
-
-
-
 
     // Add the pieces and scale them down to size.
     piece1 = pieces.create(106.8, 503.1, 'piece1');
@@ -150,8 +147,6 @@ function create() {
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-
-    
 }
 
 
@@ -284,6 +279,26 @@ function switchTeleporter (player, teleporter) {
         lightbulb.body.sprite.bringToTop();
 
         piece_count = 0;
+
+        // Burst of light beams when you win.
+        p = game.add.emitter(game.world.centerX, 200, 3000);
+
+        p.makeParticles('beam');
+
+        p.start(false, 5000, 20);
+
+        var lightbulb2 = pieces.create(358.6, 45, 'lightbulb');
+        lightbulb2.scale.setTo(.3, .3);
+
+        lightbulb2.body.sprite.bringToTop();
+
+        // Text when you win.
+        var text = "You Win!";
+        var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
+
+        var t = game.add.text(game.world.centerX, game.world.centerY, text, style);
+
+        t.anchor.setTo(0.5, 0.5);
     }
 
     player.body.sprite.bringToTop();
