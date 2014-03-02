@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
 
@@ -50,39 +50,57 @@ function create() {
     pieces = game.add.group();
 
     // Here we create the ground.
-    var ground = platforms.create(0, game.world.height - 10, 'ground');
+    var ground = platforms.create(0, game.world.height - 60, 'ground');
 
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
 
     // Add the pieces and scale them down to size.
     var piece1 = pieces.create(200, 500, 'piece1');
-    piece1.scale.setTo(.2, .2);
+    piece1.scale.setTo(.1, .1);
     piece1.body.gravity.y = 6;
     piece1.body.bounce.y = 0.2;
 
     var piece2 = pieces.create(250, 500, 'piece2');
-    piece2.scale.setTo(.2, .2);
+    piece2.scale.setTo(.1, .1);
     piece2.body.gravity.y = 6;
     piece2.body.bounce.y = 0.2;
 
     var piece3 = pieces.create(300, 500, 'piece3');
-    piece3.scale.setTo(.2, .2);
+    piece3.scale.setTo(.1, .1);
     piece3.body.gravity.y = 6;
     piece3.body.bounce.y = 0.2;
 
     var piece4 = pieces.create(350, 500, 'piece4');
-    piece4.scale.setTo(.2, .2);
+    piece4.scale.setTo(.1, .1);
     piece4.body.gravity.y = 6;
     piece4.body.bounce.y = 0.2;
 
     var piece5 = pieces.create(400, 500, 'piece5');
-    piece5.scale.setTo(.2, .2);
+    piece5.scale.setTo(.1, .1);
     piece5.body.gravity.y = 6;
     piece5.body.bounce.y = 0.2;
 
+    // Add the light bulb status diplay
+    var disp1 = pieces.create(150, 605, 'piece1');
+    disp1.scale.setTo(.1, .1);
+
+    var disp2 = pieces.create(138, 605, 'piece2');
+    disp2.scale.setTo(.1, .1);
+
+    var disp3 = pieces.create(138, 610, 'piece3');
+    disp3.scale.setTo(.1, .1);
+
+    var disp4 = pieces.create(152, 618, 'piece4');
+    disp4.scale.setTo(.1, .1);
+
+    var disp5 = pieces.create(137, 626, 'piece5');
+    disp5.scale.setTo(.1, .1);
+
+
     // The teleporter
-    teleporter = game.add.sprite(700, game.world.height - 138, 'teleporter');
+    teleporter = game.add.sprite(700, game.world.height - 124, 'teleporter');
+    teleporter.scale.setTo(.5, .5);
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
@@ -162,7 +180,8 @@ function switchTeleporter (player, teleporter) {
         teleporter.kill();
 
         // Add new teleporter
-        teleporter2 = game.add.sprite(700, game.world.height - 138, 'teleporter2');
+        teleporter2 = game.add.sprite(700, game.world.height - 124, 'teleporter2');
+        teleporter2.scale.setTo(.5, .5);
     }
 
     player.body.sprite.bringToTop();
