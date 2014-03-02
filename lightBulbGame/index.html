@@ -19,6 +19,7 @@ var game = new Phaser.Game(800, 650, Phaser.AUTO, '', { preload: preload, create
 
 function preload() {
 
+    //Load assets for our game 
     game.load.image('ground', 'assets/ground.png');
     game.load.image('background', 'assets/background2.png');
     game.load.image('teleporter', 'assets/teleporter-right.png')
@@ -76,7 +77,7 @@ function create() {
    platform_8_m = platforms.create(560, 330, 'platform');
    var platform_9  = platforms.create(380, 300, 'platform');
    var platform_10_p = platforms.create(250, 240, 'platform');
-   var platform_11_m = platforms.create(400, 190, 'platform');
+   var platform_11_m = platforms.create(400, 180, 'platform');
    var platform_12_m = platforms.create(590, 140, 'platform');
    var platform_13_p = platforms.create(740, 120, 'platform');
    var platform_14 = platforms.create(210 , 125, 'platform');
@@ -171,6 +172,7 @@ function update() {
     {
         var bandaid = pieces.create(150, 610, 'bandaid');
         bandaid.scale.setTo(.022, .022);
+        piece_count = 6;
     }
 
     // Walk onto teleporter.
@@ -267,7 +269,7 @@ function createDisp(x) {
 
 function switchTeleporter (player, teleporter) {
     
-    if (piece_count == 5)
+    if (piece_count == 6)
     {
         // Removes the teleporter from the screen
         teleporter.kill();
