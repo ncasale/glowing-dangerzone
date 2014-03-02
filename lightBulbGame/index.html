@@ -26,7 +26,7 @@ function preload() {
     game.load.image('teleporter2', 'assets/teleporter-yellow-right.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.image('platform', 'assets/platform.png');
-    game.load.image('bandaid', 'assets/bandaid');
+    game.load.image('bandaid', 'assets/bandaid.png');
 
     //Load pieces
     game.load.image('piece1', 'assets/piece1.png');
@@ -34,10 +34,10 @@ function preload() {
     game.load.image('piece3', 'assets/piece3.png');
     game.load.image('piece4', 'assets/piece4.png');
     game.load.image('piece5', 'assets/piece5.png');
-    game.load.image('dead_bulb', 'assets/lightbulb_bw');
-    game.load.image('lightbulb', 'assets/lightbulb');
+    game.load.image('dead_bulb', 'assets/lightbulb_bw.png');
+    game.load.image('lightbulb', 'assets/lightbulb.png');
 
-    game.load.image('beam', 'assets/beam');
+    game.load.image('beam', 'assets/beam.png');
 
 }
 
@@ -53,6 +53,7 @@ var piece3;
 var piece4;
 var piece5;
 var piece_count = 0;
+var x_acc = 0;
 
 function create() {
 
@@ -75,7 +76,7 @@ function create() {
    var platform_5_p = platforms.create(640, 480, 'platform');
    var platform_6 = platforms.create(740, 440, 'platform');
    var platform_7 = platforms.create(760, 360, 'platform');
-   platform_8_m = platforms.create(560, 330, 'platform');
+   platform_8_m = platforms.create(660, 330, 'platform');
    var platform_9  = platforms.create(380, 300, 'platform');
    var platform_10_p = platforms.create(250, 240, 'platform');
    var platform_11_m = platforms.create(400, 180, 'platform');
@@ -204,6 +205,25 @@ function update() {
         player.body.velocity.y = -250;
     }
 
+    //Get current x position of platform
+    var curr_x_pos = platform_8_m.body.x;
+
+    //Logic for horizontal moving platform
+    if(curr_x_pos <= 660 && curr_x_pos > 600)
+    {
+        x_acc = -100;
+    }
+
+    if(curr_x_pos >= 540 && curr_x_pos < 600)
+    {
+        x_acc = 100;
+    }
+    if(curr_x_pos == 600)
+    {
+        x_acc = 0;
+    }
+
+    platform_8_m.body.acceleration.x = x_acc;
 }
 
 function collectPiece (player, piece) {
