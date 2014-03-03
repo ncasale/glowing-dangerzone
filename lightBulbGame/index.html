@@ -45,6 +45,7 @@ var player;
 var platforms;
 var cursors;
 var pieces;
+var lightbulb2;
 var platform_8_m;
 var platform_12_m;
 
@@ -56,8 +57,13 @@ var piece5;
 var piece_count = 0;
 var x_acc = 0;
 var y_acc = 0;
+var end_state = false;
 
-function create() {
+function create() 
+{
+    // Put lightbulb behind background.
+    lightbulb2 = game.add.sprite(358.6, 45, 'lightbulb');
+    lightbulb2.scale.setTo(.3, .3);
 
     // A simple background for our game
     game.add.sprite(0, 0, 'background');
@@ -215,6 +221,9 @@ function update() {
     //Handle logic for vertically moving platforms
     var curr_y_pos_12 = platform_12_m.body.y;
     moveVert(platform_12_m, curr_y_pos_12, 100, 200, 150);
+
+    if (end_state == true)
+        lightbulb2.body.sprite.bringToTop();
  
 }
 
@@ -341,8 +350,6 @@ function switchTeleporter (player, teleporter) {
         var lightbulb = pieces.create(136, 605, 'lightbulb');
         lightbulb.scale.setTo(.12, .12);
 
-
-
         piece_count = 0;
 
         // Burst of light beams when you win.
@@ -353,11 +360,6 @@ function switchTeleporter (player, teleporter) {
         p.gravity = 0;
         p.start(false, 5000, 20);
 
-        var lightbulb2 = pieces.create(358.6, 45, 'lightbulb');
-        lightbulb2.scale.setTo(.3, .3);
-
-        lightbulb2.body.sprite.bringToTop();
-
         // Text when you win.
         var text = "You Win!";
         var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
@@ -365,11 +367,11 @@ function switchTeleporter (player, teleporter) {
         var t = game.add.text(game.world.centerX, game.world.centerY, text, style);
 
         t.anchor.setTo(0.5, 0.5);
+
+        end_state = true;
     }
 
     player.body.sprite.bringToTop();
-    lightbulb2.body.sprite.bringToTop();
-
 }
 
 </script>
