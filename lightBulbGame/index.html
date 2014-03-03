@@ -70,7 +70,7 @@ function create() {
     pieces = game.add.group();
 
     /*Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
-Platforms with a trailing m are moving platforms. */
+    Platforms with a trailing m are moving platforms. Moving platforms are declared globally.  */
 
    var platform_1_p = platforms.create(80,520, 'platform');
    var platform_2 = platforms.create(180, 460, 'platform');
@@ -83,7 +83,7 @@ Platforms with a trailing m are moving platforms. */
    var platform_9 = platforms.create(380, 300, 'platform');
    var platform_10_p = platforms.create(250, 240, 'platform');
    var platform_11_m = platforms.create(400, 180, 'platform');
-   platform_12_m = platforms.create(590, 140, 'platform');
+   platform_12_m = platforms.create(580, 140, 'platform');
    var platform_13_p = platforms.create(740, 120, 'platform');
    var platform_14 = platforms.create(210 , 125, 'platform');
    var platform_15 = platforms.create(0, 90, 'platform');
@@ -208,10 +208,12 @@ function update() {
         player.body.velocity.y = -250;
     }
 
-    //Get current x position of platform
+    //Handle logic for horizontally moving platforms
     var curr_x_pos_8 = platform_8_m.body.x;
-    var curr_y_pos_12 = platform_12_m.body.y;
     moveHoriz(platform_8_m, curr_x_pos_8, 540, 660, 600);
+
+    //Handle logic for vertically moving platforms
+    var curr_y_pos_12 = platform_12_m.body.y;
     moveVert(platform_12_m, curr_y_pos_12, 120, 180, 150);
  
 }
@@ -245,7 +247,7 @@ function moveHoriz(platform, x, min, max, center)
 
 function moveVert(platform, y, min, max, center)
 {
-    //Logic for horizontal moving platform
+    //Logic for vertical moving platform
     if(y <= max && y > center)
     {
         y_acc = -400;
@@ -265,7 +267,6 @@ function moveVert(platform, y, min, max, center)
     {
         platform.body.y = min;
     }
-
 
     platform.body.acceleration.y = y_acc;  
 }
