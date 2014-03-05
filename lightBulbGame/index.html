@@ -27,6 +27,7 @@ function preload()
     game.load.image('platform', 'assets/platform.png');
     game.load.image('bandaid', 'assets/bandaid.png');
     game.load.image('button', 'assets/button.png');
+    game.load.image('instructions', 'assets/instructions.png');
 
     //Load pieces
     game.load.image('piece1', 'assets/piece1.png');
@@ -59,6 +60,7 @@ var teleporter;
 var light;
 var timer;
 var bulbs;
+var button3;
 
 var piece1;
 var piece2;
@@ -87,7 +89,7 @@ function create()
     light.scale.setTo(.6,.6);
     
     // Start Button
-    button = game.add.button(120, 500, 'button', actionOnClick, this, 2, 1, 0);
+    button = game.add.button(120, 500, 'button', actionOnClick, this);
     button.scale.setTo(.3,.3);
 
     var start = "Start Game";
@@ -97,7 +99,7 @@ function create()
     t2.anchor.setTo(0.5, 0.5);
 
     // Instructions Button
-    button2 = game.add.button(500, 500, 'button', actionOnClick, this, 2, 1, 0);
+    button2 = game.add.button(500, 500, 'button', showInstructions, this);
     button2.scale.setTo(.3,.3);
 
     var instructions = "Instructions";
@@ -146,9 +148,28 @@ function bulbToTop(object)
     object.body.sprite.bringToTop();
 }
 
-function instructions()
+function showInstructions()
 {
-    //Text box for the instructions. Make sure to have return to menu button.
+    //Load image with instructions over the bottom half of the screen.
+    instructions = game.add.sprite(0, 190, 'instructions');
+
+    //Add button to return to menu. Put towards bottom, centered around x.
+    button3 = game.add.button(310, 550, 'button', returnToMenu, this);
+    button3.scale.setTo(0.3, 0.3);
+
+    button3.bringToTop();
+
+    // Text on button
+    var menu = "Return";
+    var menu_style = { font: "30px Arial", fill: "#000000", align: "center" };
+    var t = game.add.text(400, 590, menu, menu_style);
+    t.anchor.setTo(0.5, 0.5);
+}
+
+function returnToMenu()
+{
+    instructions.kill();
+    button3.kill();
 }
 
 function update() 
