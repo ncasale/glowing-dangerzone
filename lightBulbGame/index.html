@@ -351,7 +351,14 @@ function switchTeleporter (player, teleporter) {
         lightbulb.scale.setTo(.12, .12);
 
         piece_count = 0;
+    }
 
+    player.body.sprite.bringToTop();
+
+    win();
+}
+
+function win () {
         // Burst of light beams when you win.
         var p = game.add.emitter(game.world.centerX, 150, 3000);
         p.makeParticles('particles', [0,1]);
@@ -369,9 +376,6 @@ function switchTeleporter (player, teleporter) {
         t.anchor.setTo(0.5, 0.5);
 
         end_state = true;
-    }
-
-    player.body.sprite.bringToTop();
 }
 
 </script>
