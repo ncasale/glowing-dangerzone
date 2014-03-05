@@ -34,9 +34,13 @@ function preload()
     game.load.image('piece3', 'assets/piece3.png');
     game.load.image('piece4', 'assets/piece4.png');
     game.load.image('piece5', 'assets/piece5.png');
-    game.load.image('dead_bulb', 'assets/lightbulb_bw.png');
     game.load.image('lightbulb', 'assets/lightbulb.png');
     game.load.image('black', 'assets/black.png');
+
+    game.load.image('dead1', 'assets/lightbulb_bw_1');
+    game.load.image('dead2', 'assets/lightbulb_bw_2');
+    game.load.image('dead3', 'assets/lightbulb_bw_3');
+    game.load.image('dead4', 'assets/lightbulb_bw_4');
 
     game.load.image('beam', 'assets/beam.png');
     game.load.spritesheet('particles', 'assets/particleSheet.png', 12.5, 10);
@@ -53,8 +57,8 @@ var platform_8_m;
 var platform_12_m;
 var teleporter;
 var light;
-var broken_light;
 var timer;
+var bulbs;
 
 var piece1;
 var piece2;
@@ -74,8 +78,10 @@ function create()
     var t = game.add.text(game.world.centerX, 100, text, style); 
     t.anchor.setTo(0.5, 0.5);
 
-    broken_light = game.add.sprite(317.2, 197.5, 'dead_bulb');
-    broken_light.scale.setTo(.6,.6)
+    dead1 = game.add.sprite(317.2, 197.5, 'dead1');
+    dead2 = game.add.sprite(317.2, 197.5, 'dead2');
+    dead3 = game.add.sprite(317.2, 197.5, 'dead3');
+    dead4 = game.add.sprite(317.2, 197.5, 'dead4');
 
     light = game.add.sprite(317.2, 197.5, 'lightbulb');
     light.scale.setTo(.6,.6);
@@ -103,32 +109,31 @@ function create()
 
 function actionOnClick () 
 {
-    brokenToTop();
-    setTimeout(fixedToTop, 500);
-    setTimeout(brokenToTop, 1000);
-    setTimeout(fixedToTop, 1400);
-    setTimeout(brokenToTop, 1800);
-    setTimeout(fixedToTop, 2050);
-    setTimeout(brokenToTop, 2300);
-    setTimeout(fixedToTop, 2400);
-    setTimeout(brokenToTop, 2500);
-    setTimeout(fixedToTop, 2550);
-    setTimeout(brokenToTop, 2600);
-    setTimeout(fixedToTop, 2650);
-    setTimeout(brokenToTop, 2700);
-    setTimeout(fixedToTop, 2750);
-    setTimeout(brokenToTop, 2800);
-    setTimeout(fixedToTop, 2850);
-    setTimeout(brokenToTop, 2900);
-    setTimeout(fixedToTop, 2950);
-    setTimeout(brokenToTop, 3000);
-    setTimeout(fixedToTop, 3050);
-    setTimeout(brokenToTop, 3100);
-    setTimeout(fixedToTop, 3150);
-    setTimeout(brokenToTop, 3200);
-    setTimeout(cutToBlack, 3250);
+    setTimeout(function() {bulbToTop(dead1)}, 10);
+    setTimeout(function() {bulbToTop(light)}, 500);
+    setTimeout(function() {bulbToTop(dead2)}, 1000);
+    setTimeout(function() {bulbToTop(light)}, 1400);
+    setTimeout(function() {bulbToTop(dead3)}, 1800);
+    setTimeout(function() {bulbToTop(light)}, 2050);
+    setTimeout(function() {bulbToTop(dead4)}, 2300);
+    setTimeout(function() {bulbToTop(light)}, 2500);
+    setTimeout(function() {bulbToTop(dead4)}, 2600);
+    setTimeout(function() {bulbToTop(light)}, 2675);
+    setTimeout(function() {bulbToTop(dead4)}, 2750);
+    setTimeout(function() {bulbToTop(light)}, 2825);
+    setTimeout(function() {bulbToTop(dead4)}, 2900);
+    setTimeout(function() {bulbToTop(light)}, 2950);
+    setTimeout(function() {bulbToTop(dead4)}, 3000);
+    setTimeout(function() {bulbToTop(light)}, 3050);
+    setTimeout(function() {bulbToTop(dead4)}, 3100);
+    setTimeout(function() {bulbToTop(light)}, 3150);
+    setTimeout(function() {bulbToTop(dead4)}, 3200);
+    setTimeout(cutToBlack, 3220);
+    
+    button.kill();
+    button2.kill();
 
-    setTimeout(loadLevel1, 4000);
+    setTimeout(loadLevel1, 4400);
 }
 
 function cutToBlack()
@@ -136,14 +141,9 @@ function cutToBlack()
     game.add.sprite(0, 0, 'black');
 }
 
-function brokenToTop()
+function bulbToTop(object)
 {
-    broken_light.body.sprite.bringToTop();
-}
-
-function fixedToTop()
-{
-    light.body.sprite.bringToTop();
+    object.body.sprite.bringToTop();
 }
 
 function instructions()
