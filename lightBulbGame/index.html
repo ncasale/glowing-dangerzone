@@ -16,8 +16,8 @@
 
 var game = new Phaser.Game(800, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-function preload() {
-
+function preload() 
+{
     //Load assets for our game
     game.load.image('ground', 'assets/ground.png');
     game.load.image('background', 'assets/background2.png');
@@ -26,6 +26,7 @@ function preload() {
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.image('platform', 'assets/platform.png');
     game.load.image('bandaid', 'assets/bandaid.png');
+    game.load.image('button', 'assets/button.png');
 
     //Load pieces
     game.load.image('piece1', 'assets/piece1.png');
@@ -35,11 +36,13 @@ function preload() {
     game.load.image('piece5', 'assets/piece5.png');
     game.load.image('dead_bulb', 'assets/lightbulb_bw.png');
     game.load.image('lightbulb', 'assets/lightbulb.png');
+    game.load.image('black', 'assets/black.png');
 
     game.load.image('beam', 'assets/beam.png');
     game.load.spritesheet('particles', 'assets/particleSheet.png', 12.5, 10);
-
 }
+
+var level = 0;
 
 var player;
 var platforms;
@@ -48,6 +51,10 @@ var pieces;
 var lightbulb2;
 var platform_8_m;
 var platform_12_m;
+var teleporter;
+var light;
+var broken_light;
+var timer;
 
 var piece1;
 var piece2;
@@ -60,6 +67,157 @@ var y_acc = 0;
 var end_state = false;
 
 function create() 
+{
+    var text = "HIDDEN LIGHT";
+    var style = { font: "100px Arial", fill: "#FFFF00", align: "center" };
+
+    var t = game.add.text(game.world.centerX, 100, text, style); 
+    t.anchor.setTo(0.5, 0.5);
+
+    broken_light = game.add.sprite(317.2, 197.5, 'dead_bulb');
+    broken_light.scale.setTo(.6,.6)
+
+    light = game.add.sprite(317.2, 197.5, 'lightbulb');
+    light.scale.setTo(.6,.6);
+    
+    // Start Button
+    button = game.add.button(120, 500, 'button', actionOnClick, this, 2, 1, 0);
+    button.scale.setTo(.3,.3);
+
+    var start = "Start Game";
+    var start_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t2 = game.add.text(207, 540, start, start_style);  
+    t2.anchor.setTo(0.5, 0.5);
+
+    // Instructions Button
+    button2 = game.add.button(500, 500, 'button', actionOnClick, this, 2, 1, 0);
+    button2.scale.setTo(.3,.3);
+
+    var instructions = "Instructions";
+    var instr_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t3 = game.add.text(587, 540, instructions, instr_style);  
+    t3.anchor.setTo(0.5, 0.5);
+}
+
+function actionOnClick () 
+{
+    brokenToTop();
+    setTimeout(fixedToTop, 500);
+    setTimeout(brokenToTop, 1000);
+    setTimeout(fixedToTop, 1400);
+    setTimeout(brokenToTop, 1800);
+    setTimeout(fixedToTop, 2050);
+    setTimeout(brokenToTop, 2300);
+    setTimeout(fixedToTop, 2400);
+    setTimeout(brokenToTop, 2500);
+    setTimeout(fixedToTop, 2550);
+    setTimeout(brokenToTop, 2600);
+    setTimeout(fixedToTop, 2650);
+    setTimeout(brokenToTop, 2700);
+    setTimeout(fixedToTop, 2750);
+    setTimeout(brokenToTop, 2800);
+    setTimeout(fixedToTop, 2850);
+    setTimeout(brokenToTop, 2900);
+    setTimeout(fixedToTop, 2950);
+    setTimeout(brokenToTop, 3000);
+    setTimeout(fixedToTop, 3050);
+    setTimeout(brokenToTop, 3100);
+    setTimeout(fixedToTop, 3150);
+    setTimeout(brokenToTop, 3200);
+    setTimeout(cutToBlack, 3250);
+
+    setTimeout(loadLevel1, 4000);
+}
+
+function cutToBlack()
+{
+    game.add.sprite(0, 0, 'black');
+}
+
+function brokenToTop()
+{
+    broken_light.body.sprite.bringToTop();
+}
+
+function fixedToTop()
+{
+    light.body.sprite.bringToTop();
+}
+
+function instructions()
+{
+    //Text box for the instructions. Make sure to have return to menu button.
+}
+
+function update() 
+{
+    if(level == 1)
+    {
+        // Collisions
+        game.physics.collide(player, platforms);
+        game.physics.collide(pieces, platforms);
+
+        // Pick up pieces
+        game.physics.overlap(player, piece1, collectPiece, null, this);
+        game.physics.overlap(player, piece2, collectPiece, null, this);
+        game.physics.overlap(player, piece3, collectPiece, null, this);
+        game.physics.overlap(player, piece4, collectPiece, null, this);
+        game.physics.overlap(player, piece5, collectPiece, null, this);
+
+        if (piece_count == 5)
+        {
+            var bandaid = pieces.create(150, 610, 'bandaid');
+            bandaid.scale.setTo(.022, .022);
+            piece_count = 6;
+        }
+
+        // Walk onto teleporter.
+        game.physics.overlap(player, teleporter, switchTeleporter, null, this);
+
+        // Reset the players velocity (movement)
+        player.body.velocity.x = 0;
+
+        if (cursors.left.isDown)
+        {
+            // Move to the left
+            player.body.velocity.x = -100;
+            player.animations.play('left');
+        }
+        else if (cursors.right.isDown)
+        {
+            // Move to the right
+            player.body.velocity.x = 100;
+            player.animations.play('right');
+        }
+        else
+        {
+            // Stand still
+            player.animations.stop();
+            player.frame = 4;
+        }
+        
+        // Allow the player to jump if they are touching the ground.
+        if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.body.velocity.y = -250;
+        }
+
+        //Handle logic for horizontally moving platforms
+        var curr_x_pos_8 = platform_8_m.body.x;
+        moveHoriz(platform_8_m, curr_x_pos_8, 540, 660, 600);
+
+        //Handle logic for vertically moving platforms
+        var curr_y_pos_12 = platform_12_m.body.y;
+        moveVert(platform_12_m, curr_y_pos_12, 100, 200, 150);
+
+        if (end_state == true)
+            lightbulb2.body.sprite.bringToTop();
+     }
+}
+
+function loadLevel1()
 {
     // Put lightbulb behind background.
     lightbulb2 = game.add.sprite(358.6, 45, 'lightbulb');
@@ -74,26 +232,26 @@ function create()
     // The pieces are the pieces of the light bulb.
     pieces = game.add.group();
 
-    /*Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
-    Platforms with a trailing m are moving platforms. Moving platforms are declared globally.  */
+    // Here we create the platforms/ground. Platforms with a trailing 'p' are platforms with a piece on them.
+    // Platforms with a trailing m are moving platforms. Moving platforms are declared globally.
 
-   var platform_1_p = platforms.create(80,520, 'platform');
-   var platform_2 = platforms.create(180, 460, 'platform');
-   var platform_3 = platforms.create(380, 460, 'platform');
-   var platform_4 = platforms.create(500, 500, 'platform');
-   var platform_5_p = platforms.create(640, 480, 'platform');
-   var platform_6 = platforms.create(740, 440, 'platform');
-   var platform_7 = platforms.create(760, 360, 'platform');
-   platform_8_m = platforms.create(660, 330, 'platform');
-   var platform_9 = platforms.create(380, 300, 'platform');
-   var platform_10_p = platforms.create(250, 240, 'platform');
-   var platform_11_m = platforms.create(400, 180, 'platform');
-   platform_12_m = platforms.create(580, 140, 'platform');
-   var platform_13_p = platforms.create(740, 120, 'platform');
-   var platform_14 = platforms.create(210 , 125, 'platform');
-   var platform_15 = platforms.create(0, 90, 'platform');
-   var platform_16 = platforms.create(181, 125, 'platform');
-   var ground = platforms.create(0, game.world.height - 60, 'ground');
+    var platform_1_p = platforms.create(80,520, 'platform');
+    var platform_2 = platforms.create(180, 460, 'platform');
+    var platform_3 = platforms.create(380, 460, 'platform');
+    var platform_4 = platforms.create(500, 500, 'platform');
+    var platform_5_p = platforms.create(640, 480, 'platform');
+    var platform_6 = platforms.create(740, 440, 'platform');
+    var platform_7 = platforms.create(760, 360, 'platform');
+    platform_8_m = platforms.create(660, 330, 'platform');
+    var platform_9 = platforms.create(380, 300, 'platform');
+    var platform_10_p = platforms.create(250, 240, 'platform');
+    var platform_11_m = platforms.create(400, 180, 'platform');
+    platform_12_m = platforms.create(580, 140, 'platform');
+    var platform_13_p = platforms.create(740, 120, 'platform');
+    var platform_14 = platforms.create(210 , 125, 'platform');
+    var platform_15 = platforms.create(0, 90, 'platform');
+    var platform_16 = platforms.create(181, 125, 'platform');
+    var ground = platforms.create(0, game.world.height - 60, 'ground');
 
     // Add the pieces and scale them down to size.
     piece1 = pieces.create(106.8, 503.1, 'piece1');
@@ -156,100 +314,23 @@ function create()
 
     // Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-
-}
-
-
-function update() {
-
-    // Collisions
-    game.physics.collide(player, platforms);
-    game.physics.collide(pieces, platforms);
-
-    // Pick up pieces
-    game.physics.overlap(player, piece1, collectPiece, null, this);
-    game.physics.overlap(player, piece2, collectPiece, null, this);
-    game.physics.overlap(player, piece3, collectPiece, null, this);
-    game.physics.overlap(player, piece4, collectPiece, null, this);
-    game.physics.overlap(player, piece5, collectPiece, null, this);
-
-    if (piece_count == 5)
-    {
-        var bandaid = pieces.create(150, 610, 'bandaid');
-        bandaid.scale.setTo(.022, .022);
-        piece_count = 6;
-    }
-
-    // Walk onto teleporter.
-    game.physics.overlap(player, teleporter, switchTeleporter, null, this);
-
-    // Reset the players velocity (movement)
-    player.body.velocity.x = 0;
-
-    if (cursors.left.isDown)
-    {
-        // Move to the left
-        player.body.velocity.x = -100;
-
-        player.animations.play('left');
-    }
-    else if (cursors.right.isDown)
-    {
-        // Move to the right
-        player.body.velocity.x = 100;
-
-        player.animations.play('right');
-    }
-    else
-    {
-        // Stand still
-        player.animations.stop();
-
-        player.frame = 4;
-    }
-    
-    // Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.body.velocity.y = -250;
-    }
-
-    //Handle logic for horizontally moving platforms
-    var curr_x_pos_8 = platform_8_m.body.x;
-    moveHoriz(platform_8_m, curr_x_pos_8, 540, 660, 600);
-
-    //Handle logic for vertically moving platforms
-    var curr_y_pos_12 = platform_12_m.body.y;
-    moveVert(platform_12_m, curr_y_pos_12, 100, 200, 150);
-
-    if (end_state == true)
-        lightbulb2.body.sprite.bringToTop();
- 
+    level = 1;
 }
 
 function moveHoriz(platform, x, min, max, center)
 {
      //Logic for horizontal moving platform
     if(x <= max && x > center)
-    {
         x_acc = -400;
-    }
 
     if (x > max)
-    {
         platform.body.x = max;
-    }
 
     if(x >= min && x < center)
-    {
         x_acc = 400;
-    }
 
     if(x < min)
-    {
         platform.body.x = min;
-    }
-
 
     platform.body.acceleration.x = x_acc;
 }
@@ -258,24 +339,16 @@ function moveVert(platform, y, min, max, center)
 {
     //Logic for vertical moving platform
     if(y <= max && y > center)
-    {
         y_acc = -400;
-    }
 
     if (y > max)
-    {
         platform.body.y = max;
-    }
 
     if(y >= min && y < center)
-    {
         y_acc = 400;
-    }
 
     if(y < min)
-    {
         platform.body.y = min;
-    }
 
     platform.body.acceleration.y = y_acc;  
 }
@@ -323,12 +396,10 @@ function collectPiece (player, piece) {
         piece5.kill();
     }
     piece_count += 1;
-
-
-
 }
 
-function createDisp(x) {
+function createDisp(x) 
+{
     if (x == 1)
     {
         var disp1 = pieces.create(150, 605, 'piece1');
@@ -336,7 +407,8 @@ function createDisp(x) {
     }
 }
 
-function switchTeleporter (player, teleporter) {
+function switchTeleporter (player, teleporter)
+{
     
     if (piece_count == 6)
     {
@@ -358,7 +430,8 @@ function switchTeleporter (player, teleporter) {
     win();
 }
 
-function win () {
+function win () 
+{
         // Burst of light beams when you win.
         var p = game.add.emitter(game.world.centerX, 150, 3000);
         p.makeParticles('particles', [0,1]);
