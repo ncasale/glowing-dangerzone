@@ -41,8 +41,11 @@ function preload() {
     game.load.spritesheet('particles', 'assets/particleSheet.png', 12.5, 10);
 
     //Darkness
-    game.load.spritesheet('darkness', 'assets/darkness.png', 150, 100);
+    game.load.spritesheet('darkness_1', 'assets/darkness_p1.png', 400, 325);
+    game.load.spritesheet('darkness_2', 'assets/darkness_p2.png', 400, 325);
+    game.load.spritesheet('darkness_3', 'assets/darkness_p3.png', 400, 325);
     game.load.spritesheet('tele_darkness', 'assets/tele_darkness.png', 43, 64);
+    game.load.spritesheet('darkness_4', 'assets/darkness_p4.png', 400, 325);
 
 }
 
@@ -53,7 +56,12 @@ var pieces;
 var platform_8_m;
 var platform_12_m;
 
+//Global darkness variables
 var darkness;
+var darkness_1;
+var darkness_2;
+var darkness_3;
+var darkness_4;
 var tele_darkness;
 
 var piece1;
@@ -64,6 +72,8 @@ var piece5;
 var piece_count = 0;
 var x_acc = 0;
 var y_acc = 0;
+var darkness_count = 0;
+var darkness_loop = 0;
 
 function create() {
 
@@ -146,13 +156,9 @@ function create() {
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
-
-    //Settings for darkness
-    darkness = game.add.sprite(150, 100, 'darkness');
-    tele_darkness = game.add.sprite(0, 20, 'tele_darkness');
     // Player physics properties. Give the little guy a slight bounce.
     player.body.bounce.y = 0.2;
-    player.body.gravity.y = 2;
+    player.body.gravity.y = 6;
     player.body.collideWorldBounds = true;
 
     /**********************************************************/
@@ -163,13 +169,6 @@ function create() {
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-    //Animations for Darkness
-    darkness.animations.add('dark_animate', [0,1,2], 10, true);
-
-    //Animation for darkness over the teleporter
-    tele_darkness.animations.add('tele_flicker', [0,1,2,3,4], 4, true);
-
-    tele_darkness.alpha = .97;
 
     // Our controls.
     cursors = game.input.keyboard.createCursorKeys();
@@ -196,8 +195,67 @@ function update() {
         piece_count = 6;
     }
 
+
+  
     //Add the darkness
-    tele_darkness.animations.play('tele_flicker');
+
+    if(darkness_count == 1)
+    {
+        if(darkness_loop == 0)
+        {
+            darkness_1 = game.add.sprite(0,0, 'darkness_1');
+            darkness_1.scale.setTo(2,2);           
+            darkness_1.animations.add('active_1', [0,1,2,3,4], 4, true);
+            darkness_loop++;
+        }
+
+        darkness_1.animations.play('active_1');
+
+    }
+    if(darkness_count == 2)
+    {
+        if(darkness_loop == 1)
+        {
+            darkness_2 = game.add.sprite(0,0, 'darkness_2');
+            darkness_2.scale.setTo(2,2);
+            darkness_2.animations.add('active_2', [0,1,2,3,4], 4, true);
+            darkness_loop++;
+        }
+        darkness_1.kill();
+        darkness_2.animations.play('active_2');
+    }
+
+    if(darkness_count == 3)
+    {
+        if(darkness_loop ==2)
+        {
+            darkness_3 = game.add.sprite(0,0, 'darkness_3');
+            darkness_3.scale.setTo(2,2);
+            darkness_3.animations.add('active_3', [0,1,2,3,4], 4, true);
+            darkness_loop++
+        }
+        darkness_2.kill();
+        darkness_3.animations.play('active_3');
+    }
+    if(darkness_count == 4)
+    {
+        if(darkness_loop == 3)
+        {
+            darkness_4 = game.add.sprite(0,0, 'darkness_4');
+            darkness_4.scale.setTo(2,2);
+            darkness_4.animations.add('active_4', [0,1,2,3,4], 4, true);
+            darkness_loop++;
+        }
+        darkness_3.kill();
+        darkness_4.animations.play('active_4');
+    }
+    if(darkness_count == 5)
+    {
+        darkness_4.kill();
+    }
+
+    darkness_count = createDarkness(piece_count);
+
 
     // Walk onto teleporter.
     game.physics.overlap(player, teleporter, switchTeleporter, null, this);
@@ -250,7 +308,7 @@ function moveHoriz(platform, x, min, max, center)
      //Logic for horizontal moving platform
     if(x <= max && x > center)
     {
-        x_acc = -400;
+        x_acc = -200;
     }
 
     if (x > max)
@@ -260,7 +318,7 @@ function moveHoriz(platform, x, min, max, center)
 
     if(x >= min && x < center)
     {
-        x_acc = 400;
+        x_acc = 200;
     }
 
     if(x < min)
@@ -405,10 +463,29 @@ function switchTeleporter (player, teleporter) {
 }
 
 function createDarkness(piece_count)
-{
-    if (piece_count >= 0)
+{   
+    if(piece_count == 0 )
     {
+        return 1;
 
+    }
+
+    if(piece_count == 1 )
+    {   
+        return 2;
+    }
+
+    if(piece_count ==2)
+    {
+        return 3;
+    }
+    if(piece_count ==3)
+    {
+        return 4;
+    }
+    if(piece_count == 4)
+    {
+        return 5;
     }
 }
 
