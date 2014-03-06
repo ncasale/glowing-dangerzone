@@ -45,6 +45,10 @@ function preload()
 
     game.load.image('beam', 'assets/beam.png');
     game.load.spritesheet('particles', 'assets/particleSheet.png', 12.5, 10);
+
+    //music
+    //game.load.audio('music', ['assets/music', 'assets/music.ogg']);
+    game.load.audio('music', 'assets/music.ogg');
 }
 
 var level = 0;
@@ -71,9 +75,13 @@ var piece_count = 0;
 var x_acc = 0;
 var y_acc = 0;
 var end_state = false;
+var music;
 
 function create() 
 {
+    music = game.add.audio('music', 1, true);
+    music.play('',0,1,true);
+
     var text = "HIDDEN LIGHT";
     var style = { font: "100px Arial", fill: "#FFFF00", align: "center" };
 
