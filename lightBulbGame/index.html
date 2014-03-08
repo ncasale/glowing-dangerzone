@@ -49,6 +49,13 @@ function preload()
     //music
     //game.load.audio('music', ['assets/music', 'assets/music.ogg']);
     game.load.audio('music', 'assets/music.mp3.mp3');
+    //Darkness
+    game.load.spritesheet('darkness_1', 'assets/darkness_p1.png', 400, 325);
+    game.load.spritesheet('darkness_2', 'assets/darkness_p2.png', 400, 325);
+    game.load.spritesheet('darkness_3', 'assets/darkness_p3.png', 400, 325);
+    game.load.spritesheet('tele_darkness', 'assets/tele_darkness.png', 43, 64);
+    game.load.spritesheet('darkness_4', 'assets/darkness_p4.png', 400, 325);
+
 }
 
 var level = 0;
@@ -66,6 +73,14 @@ var timer;
 var bulbs;
 var button3;
 
+//Global darkness variables
+var darkness;
+var darkness_1;
+var darkness_2;
+var darkness_3;
+var darkness_4;
+var tele_darkness;
+
 var piece1;
 var piece2;
 var piece3;
@@ -74,6 +89,8 @@ var piece5;
 var piece_count = 0;
 var x_acc = 0;
 var y_acc = 0;
+var darkness_count = 0;
+var darkness_loop = 0;
 var end_state = false;
 var music;
 
@@ -195,6 +212,9 @@ function update()
         game.physics.overlap(player, piece4, collectPiece, null, this);
         game.physics.overlap(player, piece5, collectPiece, null, this);
 
+        // Walk onto teleporter.
+        game.physics.overlap(player, teleporter, switchTeleporter, null, this);
+
         if (piece_count == 5)
         {
             var bandaid = pieces.create(150, 610, 'bandaid');
@@ -202,8 +222,65 @@ function update()
             piece_count = 6;
         }
 
-        // Walk onto teleporter.
-        game.physics.overlap(player, teleporter, switchTeleporter, null, this);
+
+        //Add the darkness
+
+        if(darkness_count == 1)
+        {
+            if(darkness_loop == 0)
+            {
+                darkness_1 = game.add.sprite(0,0, 'darkness_1');
+                darkness_1.scale.setTo(2,2);           
+                darkness_1.animations.add('active_1', [0,1,2,3,4], 4, true);
+                darkness_loop++;
+            }
+
+            darkness_1.animations.play('active_1');
+
+        }
+        if(darkness_count == 2)
+        {
+            if(darkness_loop == 1)
+            {
+                darkness_2 = game.add.sprite(0,0, 'darkness_2');
+                darkness_2.scale.setTo(2,2);
+                darkness_2.animations.add('active_2', [0,1,2,3,4], 4, true);
+                darkness_loop++;
+            }
+            darkness_1.kill();
+            darkness_2.animations.play('active_2');
+        }
+
+        if(darkness_count == 3)
+        {
+            if(darkness_loop ==2)
+            {
+                darkness_3 = game.add.sprite(0,0, 'darkness_3');
+                darkness_3.scale.setTo(2,2);
+                darkness_3.animations.add('active_3', [0,1,2,3,4], 4, true);
+                darkness_loop++
+            }
+            darkness_2.kill();
+            darkness_3.animations.play('active_3');
+        }
+        if(darkness_count == 4)
+        {
+            if(darkness_loop == 3)
+            {
+                darkness_4 = game.add.sprite(0,0, 'darkness_4');
+                darkness_4.scale.setTo(2,2);
+                darkness_4.animations.add('active_4', [0,1,2,3,4], 4, true);
+                darkness_loop++;
+            }
+            darkness_3.kill();
+            darkness_4.animations.play('active_4');
+        }
+        if(darkness_count == 5)
+        {
+            darkness_4.kill();
+        }
+
+        darkness_count = createDarkness(piece_count);
 
         // Reset the players velocity (movement)
         player.body.velocity.x = 0;
@@ -212,18 +289,21 @@ function update()
         {
             // Move to the left
             player.body.velocity.x = -100;
+
             player.animations.play('left');
         }
         else if (cursors.right.isDown)
         {
             // Move to the right
             player.body.velocity.x = 100;
+
             player.animations.play('right');
         }
         else
         {
             // Stand still
             player.animations.stop();
+
             player.frame = 4;
         }
         
@@ -239,7 +319,7 @@ function update()
 
         //Handle logic for vertically moving platforms
         var curr_y_pos_12 = platform_12_m.body.y;
-        moveVert(platform_12_m, curr_y_pos_12, 100, 200, 150);
+        moveVert(platform_12_m, curr_y_pos_12, 120, 180, 150);
 
         if (end_state == true)
             lightbulb2.body.sprite.bringToTop();
@@ -331,32 +411,40 @@ function loadLevel1()
 
     // The player and its settings
     player = game.add.sprite(32, game.world.height - 150, 'dude');
-
     // Player physics properties. Give the little guy a slight bounce.
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 6;
     player.body.collideWorldBounds = true;
 
+    /**********************************************************/
+    //Animations - All animations 
+    /*********************************************************/
+
     // Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
+
 
     // Our controls.
     cursors = game.input.keyboard.createCursorKeys();
     level = 1;
 }
 
+
+
 function moveHoriz(platform, x, min, max, center)
 {
      //Logic for horizontal moving platform
     if(x <= max && x > center)
-        x_acc = -400;
+
+        x_acc = -200;
 
     if (x > max)
         platform.body.x = max;
 
     if(x >= min && x < center)
-        x_acc = 400;
+
+        x_acc = 200;
 
     if(x < min)
         platform.body.x = min;
@@ -380,6 +468,11 @@ function moveVert(platform, y, min, max, center)
         platform.body.y = min;
 
     platform.body.acceleration.y = y_acc;  
+}
+
+function moveRot(platform, rot)
+{
+    platform.body.angularVelocity = rot;
 }
 
 function collectPiece (player, piece) {
@@ -478,6 +571,33 @@ function win ()
         t.anchor.setTo(0.5, 0.5);
 
         end_state = true;
+}
+
+function createDarkness(piece_count)
+{   
+    if(piece_count == 0 )
+    {
+        return 1;
+
+    }
+
+    if(piece_count == 1 )
+    {   
+        return 2;
+    }
+
+    if(piece_count ==2)
+    {
+        return 3;
+    }
+    if(piece_count ==3)
+    {
+        return 4;
+    }
+    if(piece_count == 4)
+    {
+        return 5;
+    }
 }
 
 </script>
