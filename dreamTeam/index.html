@@ -1,0 +1,338 @@
+ <!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dream Team</title>
+    <script type="text/javascript" src="phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() 
+{
+    //Load assets for our game
+    game.load.image('button', 'assets/button.png');
+    game.load.image('black', 'assets/black.png');
+    game.load.image('background', 'assets/background.png');
+    game.load.image('barrier', 'assets/barrier.png');
+    game.load.image('divider', 'assets/divider.png');
+    game.load.image('mouse', 'assets/mouse.png');
+    game.load.image('switch', 'assets/circle.png');
+    game.load.spritesheet('field', 'assets/force_field.png', 90, 15);
+    game.load.image('gate', 'assets/gate.png');
+    game.load.image('spikes', 'assets/spikes.png');
+    game.load.image('instructions', 'assets/instructions.png');
+
+    //music
+    game.load.audio('music', 'assets/music.mp3');
+}
+
+var level = 0;
+
+var players;
+var player1;
+var player2;
+var barriers;
+var spikes;
+var cursors;
+var menu = true;
+var button;
+var currentSpeed1 = 0;
+var currentSpeed2 = 0;
+var deathCounter = 0;
+
+var gate1;
+var gate2;
+
+var onGate1 = false;
+var onGate2 = false;
+
+function create() 
+{
+    music = game.add.audio('music', 1, true);
+    music.play('',0,1,true);    
+
+    var text = "Dream Team";
+    var style = { font: "100px Arial", fill: "#FFFFFF", align: "center" };
+
+    var t = game.add.text(game.world.centerX, 200, text, style); 
+    t.anchor.setTo(0.5, 0.5);
+
+    // Start Button
+    button = game.add.button(120, 420, 'button', onClick, this);
+    button.scale.setTo(.3,.3);
+
+    var start = "Start Game";
+    var start_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t2 = game.add.text(207, 460, start, start_style);  
+    t2.anchor.setTo(0.5, 0.5);
+
+    // Instructions Button
+    button2 = game.add.button(500, 420, 'button', showInstructions, this);
+    button2.scale.setTo(.3,.3);
+
+    var instructions = "Instructions";
+    var instr_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t3 = game.add.text(587, 460, instructions, instr_style);  
+    t3.anchor.setTo(0.5, 0.5);
+
+    // Our controls.
+    cursors = game.input.keyboard.createCursorKeys();
+    keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    keyS = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+}
+
+function showInstructions()
+{
+    //Load image with instructions over the bottom half of the screen.
+    instructions = game.add.sprite(0, 0, 'instructions');
+
+    //Add button to return to menu. Put towards bottom, centered around x.
+    button3 = game.add.button(310, 500, 'button', returnToMenu, this);
+    button3.scale.setTo(0.3, 0.3);
+
+    button3.bringToTop();
+
+    // Text on button
+    var menu = "Return";
+    var menu_style = { font: "30px Arial", fill: "#000000", align: "center" };
+    var t = game.add.text(400, 540, menu, menu_style);
+    t.anchor.setTo(0.5, 0.5);
+}
+
+function returnToMenu()
+{
+    instructions.kill();
+    button3.kill();
+}
+
+function onClick()
+{
+    menu = false;
+    button.kill();
+    loadLevel1();
+}
+
+function update() 
+{
+    if(menu == false)
+    {
+        game.physics.collide(players, barriers);
+        //game.physics.collide(players, fields);
+
+        game.physics.overlap(players, switch1, function() {activateSwitch(switch1, field1)}, null, this);
+        game.physics.overlap(players, switch2, function() {activateSwitch(switch2, field2)}, null, this);
+        game.physics.overlap(players, switch3, function() {activateSwitch(switch3, field3)}, null, this);
+        game.physics.overlap(players, switch4, function() {activateSwitch(switch4, field4)}, null, this);
+
+        game.physics.overlap(players, gate1, function() {overGate(player1, gate1)}, null, this);
+        game.physics.overlap(players, gate2, function() {overGate(player2, gate2)}, null, this);
+
+        game.physics.overlap(player1, fields, function() {killPlayer(player1)}, null, this);
+        game.physics.overlap(player2, fields, function() {killPlayer(player2)}, null, this);
+
+        game.physics.overlap(player1, spikes, function() {killPlayer(player1)}, null, this);
+        game.physics.overlap(player2, spikes, function() {killPlayer(player2)}, null, this);      
+
+        //Control movement of player2.
+        if (cursors.left.isDown)
+            player2.angle -= 4;
+        else if (cursors.right.isDown)
+            player2.angle += 4;
+        else if (cursors.up.isDown)
+            //  The speed we'll travel at
+            currentSpeed2 = 100;
+        else
+        {
+            if (currentSpeed2 > 0)
+                currentSpeed2 = 0;
+        }
+        if (currentSpeed2 >= 0)
+            game.physics.velocityFromRotation(player2.rotation, currentSpeed2, player2.body.velocity);
+
+        //Control movement of player1.
+        if (keyA.isDown)
+            player1.angle -= 4;
+        else if (keyD.isDown)
+            player1.angle += 4;
+        else if (keyW.isDown)
+            //  The speed we'll travel at
+            currentSpeed1 = 100;
+        else
+        {
+            if (currentSpeed1 > 0)
+                currentSpeed1 = 0;
+        }
+        if (currentSpeed1 >= 0)
+            game.physics.velocityFromRotation(player1.rotation, currentSpeed1, player1.body.velocity);
+
+        if (gate1.alive == false && gate2.alive == false)
+            win();
+
+        if (deathCounter == 2)
+            lose();
+    }
+}
+
+function loadLevel1()
+{
+    game.add.sprite(0, 0, 'background');
+
+    barriers = game.add.group();
+    players = game.add.group();
+    switches = game.add.group();
+    fields = game.add.group();
+    gates = game.add.group();
+
+    // Create the divider.
+    var divider = barriers.create(390, 0, 'divider');
+
+    // Layout for left side.
+    var barrier1 = barriers.create(0, 450, 'barrier');
+    var barrier2 = barriers.create(125, 450, 'barrier');
+    var barrier3 = barriers.create(215, 300, 'barrier');
+    var barrier4 = barriers.create(90, 300, 'barrier');
+    var barrier5 = barriers.create(-25, 150, 'barrier');
+    var barrier6 = barriers.create(240, 150, 'barrier');
+
+    // Layout for right side.
+    var barrier7 = barriers.create(625, 450, 'barrier');
+    var barrier8 = barriers.create(500, 450, 'barrier');
+    var barrier9 = barriers.create(390, 300, 'barrier');
+    var barrier10 = barriers.create(535, 300, 'barrier');
+    var barrier11 = barriers.create(650, 150, 'barrier');
+    var barrier12 = barriers.create(385, 150, 'barrier');
+
+    // Left end box
+    var barrier13 = barriers.create(130, -530, 'divider');
+    var barrier14 = barriers.create(240, -530, 'divider');
+
+    // Right end box
+    var barrier15 = barriers.create(540, -530, 'divider');
+    var barrier16 = barriers.create(650, -530, 'divider');
+
+    barrier1.body.immovable = true;
+    barrier2.body.immovable = true;
+    barrier3.body.immovable = true;
+    barrier4.body.immovable = true;
+    barrier5.body.immovable = true;
+    barrier6.body.immovable = true;
+    barrier7.body.immovable = true;
+    barrier8.body.immovable = true;
+    barrier9.body.immovable = true;
+    barrier10.body.immovable = true;
+    barrier11.body.immovable = true;
+    barrier12.body.immovable = true;
+    barrier13.body.immovable = true;
+    barrier14.body.immovable = true;
+    barrier15.body.immovable = true;
+    barrier16.body.immovable = true;
+    divider.body.immovable = true;
+
+    // Add the force fields.
+    field1 = fields.create(0, 302.5, 'field');
+    field2 = fields.create(150, 52.5, 'field');
+    field3 = fields.create(560, 152.5, 'field');
+    field4 = fields.create(560, 52.5, 'field');
+
+    field1.body.immovable = true;
+    field2.body.immovable = true;
+    field3.body.immovable = true;
+    field4.body.immovable = true;
+
+    // Add the end gate.
+    gate1 = gates.create(165, 0, 'gate');
+    gate2 = gates.create(575, 0, 'gate');
+
+    gate1.body.immovable = true;
+    gate2.body.immovable = true;
+
+    // Add the switches which open the gates.
+    switch1 = switches.create(750, 485, 'switch');
+    switch2 = switches.create(420, 10, 'switch');
+    switch3 = switches.create(350, 260, 'switch');
+    switch4 = switches.create(180, 15, 'switch');
+
+    switch1.body.immovable = true;
+
+    // Create the mice.
+    player1 = players.create(200, 520, 'mouse');
+    player1.anchor.setTo(0.5, 0.5);
+    player1.body.collideWorldBounds = true;
+
+    player2 = players.create(500, 520, 'mouse');
+    player2.anchor.setTo(0.5, 0.5);
+    player2.body.collideWorldBounds = true;
+
+    // Force field animations
+    field1.animations.add('on', [0, 1, 2, 3, 4], 10, true);
+    field1.animations.play('on');
+    field2.animations.add('on', [1, 2, 3, 4, 0], 10, true);
+    field2.animations.play('on');
+    field3.animations.add('on', [2, 3, 4, 0, 1], 10, true);
+    field3.animations.play('on');
+    field4.animations.add('on', [3, 4, 0, 1, 2], 10, true);
+    field4.animations.play('on');
+
+    spikes = game.add.sprite(0, 700, 'spikes');
+    spikes.body.velocity.y = -20;
+}
+
+function activateSwitch(switches, field)
+{
+    switches.kill();
+    field.kill();
+}
+
+function overGate(player, gate)
+{
+    player.kill();
+    gate.kill();
+}
+
+function killPlayer(player)
+{
+    player.kill();
+    deathCounter++;
+}
+
+function lose()
+{
+    game.add.sprite(0, 0, 'black')
+
+    var text = "Game Over";
+    var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
+    var t = game.add.text(game.world.centerX, game.world.centerY, text, style);
+    t.anchor.setTo(0.5, 0.5);
+}
+
+function win() 
+{
+    var text = "You Win!";
+    var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
+
+    var t = game.add.text(game.world.centerX, game.world.centerY - 50, text, style);
+
+    spikes.body.velocity.y = 0;
+
+    t.anchor.setTo(0.5, 0.5);
+}
+
+</script>
+
+</body>
+</html>
+
+
