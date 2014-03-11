@@ -1,0 +1,200 @@
+ <!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dream Team</title>
+    <script type="text/javascript" src="phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() 
+{
+    //Load assets for our game
+    game.load.image('background', 'assets/background.png');
+    game.load.image('instructions', 'assets/instructions.jpg');
+    game.load.image('treehouse', 'assets/treehouse.jpg');
+    game.load.image('platform', 'assets/platform.png');
+    game.load.image('button', 'assets/button.png');
+    game.load.image('squirrel', 'assets/squirrel.png');
+
+    //music
+    game.load.audio('music', 'assets/music.mp3');
+}
+
+var level = 0;
+var player;
+var players;
+var platforms;
+var cursors;
+var menu = true;
+var button;
+var currentSpeed = 0;
+var squirrel;
+
+function create() 
+{
+    //music = game.add.audio('music', 1, true);
+    //music.play('',0,1,true);    
+
+    var text = "Flying Squirrel Man";
+    var style = { font: "80px Arial", fill: "#FFFFFF", align: "center" };
+
+    var t = game.add.text(game.world.centerX, 200, text, style); 
+    t.anchor.setTo(0.5, 0.5);
+
+    // Start Button
+    button = game.add.button(120, 420, 'button', onClick, this);
+    button.scale.setTo(.3,.3);
+
+    var start = "Lets Fly!";
+    var start_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t2 = game.add.text(207, 460, start, start_style);  
+    t2.anchor.setTo(0.5, 0.5);
+
+    // Instructions Button
+    button2 = game.add.button(500, 420, 'button', showInstructions, this);
+    button2.scale.setTo(.3,.3);
+
+    var instructions = "Instructions";
+    var instr_style = { font: "30px Arial", fill: "#000000", align: "center" };
+
+    var t3 = game.add.text(587, 460, instructions, instr_style);  
+    t3.anchor.setTo(0.5, 0.5);
+
+    // Our controls.
+    cursors = game.input.keyboard.createCursorKeys();
+    spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+} 
+
+function showInstructions()
+{
+    //Load image with instructions over the bottom half of the screen.
+    instructions = game.add.sprite(game.world.centerX-120, 150, 'instructions');
+
+    //Add button to return to menu. Put towards bottom, centered around x.
+    button3 = game.add.button(310, 500, 'button', returnToMenu, this);
+    button3.scale.setTo(0.3, 0.3);
+
+    button3.bringToTop();
+
+    // Text on button
+    var menu = "Return";
+    var menu_style = { font: "30px Arial", fill: "#000000", align: "center" };
+    var t = game.add.text(400, 540, menu, menu_style);
+    t.anchor.setTo(0.5, 0.5);
+}
+
+function returnToMenu()
+{
+    instructions.kill();
+    button3.kill();
+}
+
+function onClick()
+{
+    menu = false;
+    button.kill();
+    loadLevel1();
+}
+
+function update() 
+{
+    game.physics.collide(squirrel, platforms);
+    if(menu == false)
+    {
+        
+        //Jumping from platform
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && squirrel.body.touching.down)
+        {
+            squirrel.velocity.x = 150
+            squirrel.velocity.y = 100
+        }
+
+        //Basic angle change in air
+        if (cursors.left.isDown && !player.body.touching.down)
+            squirrel.angle -= 4;
+        else if (cursors.right.isDown)
+            squirrel.angle += 4;
+        else 
+        {
+            squirrel.angle -=2
+        }
+        
+        //Movement on Ground
+        if (cursors.left.isDown)
+            squirrel.velocity.x = -100;
+
+        if (cursors.right.isDown)
+            squirrel.velocity.x = 100;
+
+
+
+       /* else
+        {
+            if (currentSpeed > 0)
+                currentSpeed = 0;
+        }
+        if (currentSpeed >= 0)
+            game.physics.velocityFromRotation(player2.rotation, currentSpeed2, player2.body.velocity);*/
+
+       
+    }
+}
+
+function loadLevel1()
+{
+
+    game.add.sprite(0, 0, 'background');
+    game.add.sprite(-50,180, 'treehouse');
+
+    squirrel = game.add.sprite(32, game.world.height - 150, 'dude');
+
+    platforms = game.add.group();
+    var platform_start = platforms.create(0, 100, 'platform');
+
+
+
+
+
+    
+    squirrel.anchor.setTo(0.5, 0.5);
+    squirrel.body.collideWorldBounds = true;
+
+    squirrel.body.gravity = 0;
+}
+
+
+
+/*function killPlayer(player)
+{
+    player.kill();
+    deathCounter++;
+}
+
+function lose()
+{
+    game.add.sprite(0, 0, 'black')
+
+    var text = "Game Over";
+    var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
+    var t = game.add.text(game.world.centerX, game.world.centerY, text, style);
+    t.anchor.setTo(0.5, 0.5);
+}*/
+
+
+</script>
+
+</body>
+</html>
+
+
