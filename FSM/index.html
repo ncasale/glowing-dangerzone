@@ -25,6 +25,7 @@ function preload()
     game.load.image('platform', 'assets/platform.png');
     game.load.image('button', 'assets/button.png');
     game.load.image('squirrel', 'assets/squirrel.png');
+    game.load.image('ground', 'assets/ground.png');
 
     //music
     game.load.audio('music', 'assets/music.mp3');
@@ -39,6 +40,7 @@ var menu = true;
 var button;
 var currentSpeed = 0;
 var squirrel;
+var ground;
 
 function create() 
 {
@@ -113,15 +115,61 @@ function update()
     if(menu == false)
     {
         
-        //Jumping from platform
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && squirrel.body.touching.down)
+        //Walking on ground
+        if(squirrel.body.touching.down)
         {
-            squirrel.velocity.x = 150
-            squirrel.velocity.y = 100
-        }
+            if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+            {    
+                squirrel.body.velocity.y = -100;
+                squirrel.body.velocity.x = 150;
+            }
+            
+            else if (cursors.left.isDown)
+            {
+                squirrel.body.velocity.x = -100;
+            }
+            
+            else if (cursors.right.isDown)
+            {
+                squirrel.body.velocity.x = 100;
+            }
 
-        //Basic angle change in air
-        if (cursors.left.isDown && !player.body.touching.down)
+            else
+                squirrel.body.velocity.x = 0;
+        }                
+            
+        if(!squirrel.body.touching.down)
+        {
+            currentspeed = 200;
+
+            if (cursors.left.isDown)
+            {
+                squirrel.angle -= 4;
+            }
+            
+            else if (cursors.right.isDown)
+            {
+                squirrel.angle += 4;
+            }
+
+            else
+            {
+                if (currentSpeed > 0)
+                {
+                    currentSpeed -= 4;
+                }
+            }
+
+            if (currentSpeed > 0)
+            {
+                game.physics.velocityFromRotation(squirrel.rotation, currentSpeed, squirrel.body.velocity);
+            }        
+        }
+        
+
+
+        /*//Basic angle change in air
+        if (cursors.left.isDown && !squirrel.body.touching.down)
             squirrel.angle -= 4;
         else if (cursors.right.isDown)
             squirrel.angle += 4;
@@ -132,10 +180,10 @@ function update()
         
         //Movement on Ground
         if (cursors.left.isDown)
-            squirrel.velocity.x = -100;
+            squirrel.body.velocity.x = -100;
 
         if (cursors.right.isDown)
-            squirrel.velocity.x = 100;
+            squirrel.body.velocity.x = 100;
 
 
 
@@ -146,8 +194,9 @@ function update()
         }
         if (currentSpeed >= 0)
             game.physics.velocityFromRotation(player2.rotation, currentSpeed2, player2.body.velocity);*/
+        
 
-       
+   //squirrel.body.lineardampening = x; <-- can be used to decelerate body    
     }
 }
 
@@ -155,22 +204,25 @@ function loadLevel1()
 {
 
     game.add.sprite(0, 0, 'background');
-    game.add.sprite(-50,180, 'treehouse');
+    game.add.sprite(-50,120, 'treehouse');
+    squirrel = game.add.sprite(32, 50, 'squirrel');
+    squirrel.scale.setTo(.1,.1);
 
-    squirrel = game.add.sprite(32, game.world.height - 150, 'dude');
 
     platforms = game.add.group();
     var platform_start = platforms.create(0, 100, 'platform');
+    platform_start.body.immovable = true
 
 
-
-
-
-    
     squirrel.anchor.setTo(0.5, 0.5);
     squirrel.body.collideWorldBounds = true;
+    squirrel.body.gravity.y = 1;
+  
 
-    squirrel.body.gravity = 0;
+
+    ground = platforms.create(0, game.world.height - 64, 'ground');
+    ground.body.immovable = true;
+    ground.scale.setTo(2,2);
 }
 
 
