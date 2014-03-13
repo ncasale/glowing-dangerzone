@@ -24,7 +24,7 @@ function preload()
     game.load.image('treehouse', 'assets/treehouse.jpg');
     game.load.image('platform', 'assets/platform.png');
     game.load.image('button', 'assets/button.png');
-    game.load.image('squirrel', 'assets/squirrel.png');
+    game.load.image('squirrel', 'assets/clipart arrow 4.jpg');
     game.load.image('ground', 'assets/ground.png');
 
     //music
@@ -137,28 +137,35 @@ function update()
             else
                 squirrel.body.velocity.x = 0;
         }                
-            
+        
+        //In the air.     
         if(!squirrel.body.touching.down)
         {
-            currentspeed = 200;
 
             if (cursors.left.isDown)
             {
-                squirrel.angle -= 4;
+                squirrel.body.angularVelocity -= .5;
             }
             
-            else if (cursors.right.isDown)
-            {
-                squirrel.angle += 4;
-            }
+            //if (squirrel.angle < 90)
+            if (cursors.right.isDown)
+                {
+                    squirrel.
+                    squirrel.body.angularVelocity += .5;
+                }
 
-            else
+                else 
+                {
+                    squirrel.body.angularVelocity += .25;
+                }
+
+            /*else ------> this was included in ben's code and tanks example online - what does it do? 
             {
                 if (currentSpeed > 0)
                 {
                     currentSpeed -= 4;
                 }
-            }
+            }*/
 
             if (currentSpeed > 0)
             {
@@ -166,13 +173,14 @@ function update()
             }        
         }
         
+            if(!squirrel.body.touching.down)
+                {
+                    currentspeed = 200;
 
-
+                    squirrel.body.velocity.x = Math.cos(squirrel.angle) * 200;
+                    //squirrel.body.velocity.y = -Math.cos(squirrel.angle) * 200;
+                }  
         /*//Basic angle change in air
-        if (cursors.left.isDown && !squirrel.body.touching.down)
-            squirrel.angle -= 4;
-        else if (cursors.right.isDown)
-            squirrel.angle += 4;
         else 
         {
             squirrel.angle -=2
@@ -205,7 +213,7 @@ function loadLevel1()
 
     game.add.sprite(0, 0, 'background');
     game.add.sprite(-50,120, 'treehouse');
-    squirrel = game.add.sprite(32, 50, 'squirrel');
+    squirrel = game.add.sprite(game.world.centerX, game.world.centerY, 'squirrel');
     squirrel.scale.setTo(.1,.1);
 
 
@@ -216,7 +224,8 @@ function loadLevel1()
 
     squirrel.anchor.setTo(0.5, 0.5);
     squirrel.body.collideWorldBounds = true;
-    squirrel.body.gravity.y = 1;
+    squirrel.body.gravity.y = 0;
+    squirrel.angle = (90);
   
 
 
