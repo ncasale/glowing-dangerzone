@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Dream Team</title>
+    <title>Flying Squirrel Man</title>
     <script type="text/javascript" src="phaser.min.js"></script>
     <style type="text/css">
         body {
@@ -20,15 +20,20 @@ function preload()
 {
     //Load assets for our game
     game.load.image('background', 'assets/background.png');
-    game.load.image('instructions', 'assets/instructions.jpg');
-    game.load.image('treehouse', 'assets/treehouse.jpg');
+    game.load.image('background2', 'assets/background2.png');
+    //game.load.image('instructions', 'assets/instructions.jpg');
+    game.load.image('treehouse', 'assets/treehouse.png');
     game.load.image('platform', 'assets/platform.png');
     game.load.image('button', 'assets/button.png');
-    game.load.image('squirrel', 'assets/clipart arrow 4.jpg');
-    game.load.image('ground', 'assets/ground.png');
+
+    //game.load.image('squirrel', 'assets/clipart arrow 4.jpg');
+    //game.load.image('ground', 'assets/ground.png');
 
     //music
     game.load.audio('music', 'assets/music.mp3');
+
+    game.load.image('squirrel', 'assets/squirrel.png');
+
 }
 
 var level = 0;
@@ -44,13 +49,12 @@ var ground;
 
 function create() 
 {
-    //music = game.add.audio('music', 1, true);
-    //music.play('',0,1,true);    
+    game.world.setBounds(0, 0, 4800, 2000);
 
     var text = "Flying Squirrel Man";
     var style = { font: "80px Arial", fill: "#FFFFFF", align: "center" };
 
-    var t = game.add.text(game.world.centerX, 200, text, style); 
+    var t = game.add.text(400, 200, text, style); 
     t.anchor.setTo(0.5, 0.5);
 
     // Start Button
@@ -106,6 +110,7 @@ function onClick()
 {
     menu = false;
     button.kill();
+    button2.kill();
     loadLevel1();
 }
 
@@ -113,8 +118,8 @@ function update()
 {
     game.physics.collide(squirrel, platforms);
     if(menu == false)
-    {
-        
+    {   
+        /*
         //Walking on ground
         if(squirrel.body.touching.down)
         {
@@ -166,7 +171,7 @@ function update()
                     currentSpeed -= 4;
                 }
             }*/
-
+/*
             if (currentSpeed > 0)
             {
                 game.physics.velocityFromRotation(squirrel.rotation, currentSpeed, squirrel.body.velocity);
@@ -180,7 +185,7 @@ function update()
                     squirrel.body.velocity.x = Math.cos(squirrel.angle) * 200;
                     //squirrel.body.velocity.y = -Math.cos(squirrel.angle) * 200;
                 }  
-        /*//Basic angle change in air
+        //Basic angle change in air
         else 
         {
             squirrel.angle -=2
@@ -205,12 +210,24 @@ function update()
         
 
    //squirrel.body.lineardampening = x; <-- can be used to decelerate body    
+
+        //Basic angle change in air
+        if (cursors.right.isDown)
+            squirrel.body.velocity.x = 300;
+                //Basic angle change in air
+        if (cursors.up.isDown)
+            squirrel.body.velocity.y = -50;
     }
 }
 
 function loadLevel1()
 {
+    game.add.sprite(0, -1200, 'background2');
+    game.add.sprite(1200, -1200, 'background2');
+    game.add.sprite(2400, -1200, 'background2');
+    game.add.sprite(3600, -1200, 'background2');
 
+/*
     game.add.sprite(0, 0, 'background');
     game.add.sprite(-50,120, 'treehouse');
     squirrel = game.add.sprite(game.world.centerX, game.world.centerY, 'squirrel');
@@ -233,25 +250,23 @@ function loadLevel1()
     ground.body.immovable = true;
     ground.scale.setTo(2,2);
 }
+*/
+    game.add.sprite(-50, 180, 'treehouse');
 
+    squirrel = game.add.sprite(20, 70, 'squirrel');
+    squirrel.scale.setTo(.1, .1);
+    game.camera.follow(squirrel);
 
+    platforms = game.add.group();
+    var platform_start = platforms.create(0, 100, 'platform');
+    platform_start.body.immovable = true;
+    
+    squirrel.anchor.setTo(0.5, 0.5);
+    squirrel.body.gravity.y = 1;
 
-/*function killPlayer(player)
-{
-    player.kill();
-    deathCounter++;
+    // Our controls.
+    cursors = game.input.keyboard.createCursorKeys();
 }
-
-function lose()
-{
-    game.add.sprite(0, 0, 'black')
-
-    var text = "Game Over";
-    var style = { font: "120px Arial", fill: "#FFFFFF", align: "center" };
-    var t = game.add.text(game.world.centerX, game.world.centerY, text, style);
-    t.anchor.setTo(0.5, 0.5);
-}*/
-
 
 </script>
 
